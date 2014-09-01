@@ -1,7 +1,7 @@
 <modification>
 	<id>Check Admin Menu Permission</id>
 	<version>1.0.0</version>
-	<vqmver>2.x</vqmver>
+	<vqmver>2.4</vqmver>
 	<author>edirpedro</author>
 
 	<file name="system/library/user.php">
