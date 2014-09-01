@@ -1,0 +1,65 @@
+<modification>
+	<id>Check Admin Menu Permission</id>
+	<version>1.0.0</version>
+	<vqmver>2.x</vqmver>
+	<author>edirpedro</author>
+
+	<file name="system/library/user.php">
+		<operation error="skip">
+			<search position="before">
+			<![CDATA[
+				public function getUserName() {
+			]]>
+			</search>
+			<add>
+			<![CDATA[
+				public function getAccessPermissions() {
+					return isset($this->permission['access']) ? $this->permission['access'] : array();
+				}
+			]]>
+			</add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/common/header.tpl">
+		<operation error="skip">
+			<search position="before">
+			<![CDATA[
+				</head>
+			]]>
+			</search>
+			<add>
+			<![CDATA[
+				<script type="text/javascript">
+				$(document).ready(function() {
+					var access_permissions = <?= json_encode($this->user->getAccessPermissions()) ?>;
+					access_permissions.push('common/home');
+										
+					$('#menu ul.left a[href*="?route="]').each(function() {
+						var route = $(this).attr('href').match(/\?route=(.*)\&/);
+						if(route && route.length) {
+							str = route[1]; //.replace('/', '\/');						
+							if(access_permissions.indexOf(str) == -1) {
+								$(this).parent('li').remove();
+							}
+						}
+					});
+					
+					cleanup_menu = function() {
+						var elements = $('#menu ul.left ul:not(:has(li))');
+						if(elements.length) {
+							elements.parent('li').remove();
+							cleanup_menu();
+						}
+					}
+					
+					cleanup_menu();
+					
+				});
+				</script>
+			]]>
+			</add>
+		</operation>
+	</file>	
+	
+</modification>
